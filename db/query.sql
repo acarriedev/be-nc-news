@@ -2,4 +2,4 @@
 \dt
 
 SELECT *
-FROM comments;
+FROM articles;
