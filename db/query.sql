@@ -2,4 +2,4 @@
 \dt
 
 SELECT *
-FROM articles;
+FROM topics;

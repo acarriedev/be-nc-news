@@ -256,4 +256,161 @@ describe("formatComments", () => {
       },
     ]);
   });
+
+  describe("reformats the created_at property", () => {
+    test("withs with one article", () => {
+      const commentsData = [
+        {
+          body: "this is a comment",
+          belongs_to: "article_a",
+          created_by: "user_a",
+          votes: 16,
+          created_at: 1588603837971,
+        },
+      ];
+      const articleRef = {
+        article_a: 1,
+      };
+
+      const formattedComments = formatComments(commentsData, articleRef);
+
+      expect(formattedComments[0].created_at).toEqual(
+        "2020-05-04T14:50:37.971Z"
+      );
+    });
+
+    test("withs with multiple articles", () => {
+      const commentsData = [
+        {
+          body: "this is a comment",
+          belongs_to: "article_a",
+          created_by: "user_a",
+          votes: 16,
+          created_at: 1588603837971,
+        },
+        {
+          body: "this is another comment",
+          belongs_to: "article_b",
+          created_by: "user_b",
+          votes: 18,
+          created_at: 1588603832345,
+        },
+      ];
+      const articleRef = {
+        article_a: 1,
+        article_b: 2,
+      };
+
+      const formattedComments = formatComments(commentsData, articleRef);
+
+      expect(formattedComments[0].created_at).toEqual(
+        "2020-05-04T14:50:37.971Z"
+      );
+      expect(formattedComments[1].created_at).toEqual(
+        "2020-05-04T14:50:32.345Z"
+      );
+    });
+  });
+
+  describe("created_by propety renamed to author", () => {
+    test("works with one article", () => {
+      const commentsData = [
+        {
+          body: "this is a comment",
+          belongs_to: "article_a",
+          created_by: "user_a",
+          votes: 16,
+          created_at: 1588603837971,
+        },
+      ];
+      const articleRef = {
+        article_a: 1,
+      };
+
+      const formattedComments = formatComments(commentsData, articleRef);
+
+      expect(formattedComments[0].hasOwnProperty("created_by")).toBe(false);
+      expect(formattedComments[0].author).toBe("user_a");
+    });
+
+    test("works with multiple articles", () => {
+      const commentsData = [
+        {
+          body: "this is a comment",
+          belongs_to: "article_a",
+          created_by: "user_a",
+          votes: 16,
+          created_at: 1588603837971,
+        },
+        {
+          body: "this is another comment",
+          belongs_to: "article_b",
+          created_by: "user_b",
+          votes: 18,
+          created_at: 1588603832345,
+        },
+      ];
+      const articleRef = {
+        article_a: 1,
+        article_b: 2,
+      };
+
+      const formattedComments = formatComments(commentsData, articleRef);
+
+      expect(formattedComments[1].hasOwnProperty("created_by")).toBe(false);
+      expect(formattedComments[0].author).toBe("user_a");
+      expect(formattedComments[1].author).toBe("user_b");
+    });
+  });
+
+  describe("Using reference object changed replaces belongs_to with article_id and its value", () => {
+    test("works with one article", () => {
+      const commentsData = [
+        {
+          body: "this is a comment",
+          belongs_to: "article_a",
+          created_by: "user_a",
+          votes: 16,
+          created_at: 1588603837971,
+        },
+      ];
+      const articleRef = {
+        article_a: 1,
+      };
+
+      const formattedComments = formatComments(commentsData, articleRef);
+
+      expect(formattedComments[0].hasOwnProperty("belongs_to")).toBe(false);
+      expect(formattedComments[0].author_id).toBe(1);
+    });
+
+    test("works with multiple articles", () => {
+      const commentsData = [
+        {
+          body: "this is a comment",
+          belongs_to: "article_a",
+          created_by: "user_a",
+          votes: 16,
+          created_at: 1588603837971,
+        },
+        {
+          body: "this is another comment",
+          belongs_to: "article_b",
+          created_by: "user_b",
+          votes: 18,
+          created_at: 1588603832345,
+        },
+      ];
+      const articleRef = {
+        article_a: 1,
+        article_b: 2,
+      };
+
+      const formattedComments = formatComments(commentsData, articleRef);
+
+      expect(formattedComments[1].hasOwnProperty("belongs_to")).toBe(false);
+      expect(formattedComments[0].author_id).toBe(1);
+      expect(formattedComments[1].author_id).toBe(2);
+    });
+  });
 });
