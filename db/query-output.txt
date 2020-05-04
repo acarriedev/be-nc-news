@@ -1,0 +1,5 @@
+You are now connected to database "nc_news" as user "AlexCarrie".
+ slug | description 
+------+-------------
+(0 rows)
+
