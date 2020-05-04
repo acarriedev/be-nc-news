@@ -2,9 +2,10 @@ You are now connected to database "nc_news" as user "AlexCarrie".
                  List of relations
  Schema |         Name         | Type  |   Owner    
 --------+----------------------+-------+------------
+ public | articles             | table | AlexCarrie
  public | knex_migrations      | table | AlexCarrie
  public | knex_migrations_lock | table | AlexCarrie
  public | topics               | table | AlexCarrie
  public | users                | table | AlexCarrie
-(4 rows)
+(5 rows)
 
