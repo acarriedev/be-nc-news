@@ -1,4 +1,5 @@
 \c nc_news;
 \dt
 
--- SELECT *;
+SELECT *
+FROM comments;
