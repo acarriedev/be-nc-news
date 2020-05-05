@@ -171,7 +171,61 @@ describe("app", () => {
               .get("/api/articles/909")
               .expect(400)
               .then(({ body: { msg } }) => {
-                expect(msg).toBe("Bad request.");
+                expect(msg).toBe("Bad request. Article does not exist");
+              });
+          });
+        });
+
+        describe("PATCH", () => {
+          test("status: 200 responds with a single article object", () => {
+            return request(app)
+              .patch("/api/articles/2")
+              .send({ inc_votes: 1 })
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(typeof article).toBe("object");
+              });
+          });
+
+          test("status: 200 update article object has votes property increased by in_votes amount if in_votes is positive", () => {
+            return request(app)
+              .patch("/api/articles/3")
+              .send({ inc_votes: 10 })
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article.votes).toBe(10);
+              });
+          });
+
+          test("status: 200 update article object has votes property decreased by in_votes amount if in_votes is negative", () => {
+            return request(app)
+              .patch("/api/articles/1")
+              .send({ inc_votes: -1 })
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article.votes).toBe(99);
+              });
+          });
+
+          test("status: 400 responds with an error when inc_vote is not an integer", () => {
+            return request(app)
+              .patch("/api/articles/1")
+              .send({ inc_votes: "Not an Integer!" })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe(
+                  "Bad request: Invalid input. Must be integer."
+                );
+              });
+          });
+
+          test("status: 400 responds with an error when given an article_id that doesn't exist", () => {
+            return request(app)
+              .patch("/api/articles/909")
+              .send({ inc_votes: 1 })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Bad request. Article does not exist");
               });
           });
         });
