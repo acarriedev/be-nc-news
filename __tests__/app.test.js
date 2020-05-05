@@ -48,7 +48,21 @@ describe("/api", () => {
             .get("/api/users/butter_bridge")
             .expect(200)
             .then(({ body: { user } }) => {
+              console.log({ user });
               expect(typeof user).toBe("object");
+            });
+        });
+
+        test("status:200 user has properties equal to user columns ", () => {
+          return request(app)
+            .get("/api/users/butter_bridge")
+            .expect(200)
+            .then(({ body: { user } }) => {
+              expect(user.username).toBe("butter_bridge");
+              expect(user.avatar_url).toBe(
+                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+              );
+              expect(user.name).toBe("jonny");
             });
         });
       });
