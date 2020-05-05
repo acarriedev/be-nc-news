@@ -7,7 +7,6 @@
     "setup-dbs": "psql -f ./db/setup.sql",
     "query": "psql -f ./db/query.sql > ./db/query-output.txt",
     "seed": "knex seed:run",
-    "seed-test": "NODE_ENV=test knex seed:run",
     "migrate-make": "knex migrate:make",
     "migrate-latest": "knex migrate:latest",
     "migrate-rollback": "knex migrate:rollback",
