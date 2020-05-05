@@ -5,9 +5,7 @@ const fetchUserByUserName = (username) => {
     .select("*")
     .from("users")
     .where("username", username)
-    .then((userRows) => {
-      return userRows[0];
-    });
+    .first();
 };
 
 module.exports = { fetchUserByUserName };

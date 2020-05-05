@@ -48,7 +48,6 @@ describe("/api", () => {
             .get("/api/users/butter_bridge")
             .expect(200)
             .then(({ body: { user } }) => {
-              console.log({ user });
               expect(typeof user).toBe("object");
             });
         });
@@ -63,6 +62,49 @@ describe("/api", () => {
                 "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
               );
               expect(user.name).toBe("jonny");
+            });
+        });
+      });
+    });
+  });
+
+  describe("/articles", () => {
+    describe("/:article_id", () => {
+      describe("GET", () => {
+        test("status:200 responds with a single article object", () => {
+          return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(typeof article).toBe("object");
+            });
+        });
+
+        test("status:200 article has properties equal to property columns ", () => {
+          return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(Object.keys(article)).toEqual(
+                expect.arrayContaining([
+                  "author",
+                  "title",
+                  "article_id",
+                  "body",
+                  "topic",
+                  "created_at",
+                  "votes",
+                ])
+              );
+            });
+        });
+
+        test("status 200: article has a comment_count which is the total count of all the comments with this article_id", () => {
+          return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article.comment_count).toBe("13");
             });
         });
       });

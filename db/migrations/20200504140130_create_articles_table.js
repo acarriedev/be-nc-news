@@ -10,7 +10,7 @@ exports.up = function (knex) {
     articlesTable.foreign("topic").references("topics.slug");
     articlesTable.text("author");
     articlesTable.foreign("author").references("users.username");
-    articlesTable.timestamp("created_at").defaultTo(knex.fn.now()); // precision option available as second arg { precision: 6 }
+    articlesTable.timestamp("created_at").defaultTo(knex.fn.now());
   });
 };
 
