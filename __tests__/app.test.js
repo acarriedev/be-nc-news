@@ -24,6 +24,19 @@ describe("/api", () => {
             expect(topics.length).toBe(3);
           });
       });
+
+      test("status 200: each topic has slug and description properties", () => {
+        return request(app)
+          .get("/api/topics")
+          .expect(200)
+          .then(({ body: { topics } }) => {
+            topics.forEach((topic) => {
+              expect(Object.keys(topic)).toEqual(
+                expect.arrayContaining(["slug", "description"])
+              );
+            });
+          });
+      });
     });
   });
 });
