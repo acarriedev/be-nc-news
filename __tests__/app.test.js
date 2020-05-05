@@ -39,4 +39,19 @@ describe("/api", () => {
       });
     });
   });
+
+  describe("/users", () => {
+    describe("/:username", () => {
+      describe("GET", () => {
+        test("status:200 responds with a single user object", () => {
+          return request(app)
+            .get("/api/users/butter_bridge")
+            .expect(200)
+            .then(({ body: { user } }) => {
+              expect(typeof user).toBe("object");
+            });
+        });
+      });
+    });
+  });
 });
