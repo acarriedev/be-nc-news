@@ -50,7 +50,7 @@ describe("app", () => {
       });
 
       test("INVALID METHODS", () => {
-        const invalidMethods = ["patch", "post", "delete"];
+        const invalidMethods = ["patch", "post", "put", "delete"];
         const requests = invalidMethods.map((method) => {
           return request(app)
             .post("/api/topics")
@@ -100,7 +100,7 @@ describe("app", () => {
         });
 
         test("INVALID METHODS", () => {
-          const invalidMethods = ["patch", "post", "delete"];
+          const invalidMethods = ["patch", "post", "put", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
               .post("/api/users/:username")
@@ -183,7 +183,17 @@ describe("app", () => {
               .send({ inc_votes: 1 })
               .expect(200)
               .then(({ body: { article } }) => {
-                expect(typeof article).toBe("object");
+                expect(Object.keys(article)).toEqual(
+                  expect.arrayContaining([
+                    "author",
+                    "title",
+                    "article_id",
+                    "body",
+                    "topic",
+                    "created_at",
+                    "votes",
+                  ])
+                );
               });
           });
 
@@ -230,8 +240,26 @@ describe("app", () => {
           });
         });
 
+        describe("POST", () => {
+          test("status: 201 responds with posted comment", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({
+                username: "butter_bridge",
+                body: "This is a great article! (test comment)",
+              })
+              .expect(201)
+              .then(({ body: { comment } }) => {
+                expect(comment.author).toBe("butter_bridge");
+                expect(comment.body).toBe(
+                  "This is a great article! (test comment)"
+                );
+              });
+          });
+        });
+
         test("INVALID METHODS", () => {
-          const invalidMethods = ["post", "delete"];
+          const invalidMethods = ["post", "put", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
               .post("/api/articles/:article_id")
