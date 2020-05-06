@@ -1,5 +1,9 @@
 const { connection } = require("../db/connection");
 
+const fetchAllArticles = () => {
+  return connection.select("*").from("articles");
+};
+
 const fetchArticleByArticleId = (article_id, inc_votes) => {
   return connection
     .select("articles.*")
@@ -38,4 +42,4 @@ const updateVotesById = (article_id, inc_votes) => {
     });
 };
 
-module.exports = { fetchArticleByArticleId, updateVotesById };
+module.exports = { fetchAllArticles, fetchArticleByArticleId, updateVotesById };

@@ -55,7 +55,7 @@ describe("app", () => {
         const invalidMethods = ["patch", "post", "put", "delete"];
         const requests = invalidMethods.map((method) => {
           return request(app)
-            .post("/api/topics")
+            [method]("/api/topics")
             .expect(405)
             .then(({ body: { msg } }) => {
               expect(msg).toBe("Method not allowed.");
@@ -105,7 +105,7 @@ describe("app", () => {
           const invalidMethods = ["patch", "post", "put", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
-              .post("/api/users/:username")
+              [method]("/api/users/:username")
               .expect(405)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe("Method not allowed.");
@@ -118,6 +118,32 @@ describe("app", () => {
     });
 
     describe("/articles", () => {
+      describe("/", () => {
+        test("status:200 responds with an array of article objects", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(Array.isArray(articles)).toBe(true);
+              expect(articles.length).toBe(12);
+            });
+        });
+
+        test("INVALID METHODS", () => {
+          const invalidMethods = ["put", "patch", "post", "delete"];
+          const requests = invalidMethods.map((method) => {
+            return request(app)
+              [method]("/api/articles")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Method not allowed.");
+              });
+          });
+
+          return Promise.all(requests);
+        });
+      });
+
       describe("/:article_id", () => {
         describe("GET", () => {
           test("status:200 responds with a single article object", () => {
@@ -246,7 +272,7 @@ describe("app", () => {
           const invalidMethods = ["put", "post", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
-              .post("/api/articles/:article_id")
+              [method]("/api/articles/:article_id")
               .expect(405)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe("Method not allowed.");
@@ -514,7 +540,7 @@ describe("app", () => {
           const invalidMethods = ["put", "patch", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
-              .post("/api/articles/:article_id")
+              [method]("/api/articles/:article_id/comments")
               .expect(405)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe("Method not allowed.");
