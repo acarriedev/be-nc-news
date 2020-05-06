@@ -1,10 +1,15 @@
 const { connection } = require("../db/connection");
 
-const fetchCommentsByArticleId = (article_id) => {
+const fetchCommentsByArticleId = (
+  article_id,
+  sort_by = "created_at",
+  order = "desc"
+) => {
   return connection
     .select("*")
     .from("comments")
     .where({ article_id })
+    .orderBy(sort_by, order)
     .then((commentsRows) => {
       if (commentsRows.length === 0) {
         return Promise.reject({

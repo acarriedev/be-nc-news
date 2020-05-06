@@ -308,7 +308,110 @@ describe("app", () => {
               });
           });
 
-          describe("queries", () => {});
+          describe("queries", () => {
+            describe("sort_by=created_at", () => {
+              test("status: 200 default sorted order is by created_at latest", () => {
+                return request(app)
+                  .get("/api/articles/1/comments")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments).toBeSortedBy("created_at", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 created_at can be ordered by asc", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?order=asc")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments).toBeSortedBy("created_at", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("sort_by=comment_id", () => {
+              test("status: 200 query sort_by=comment_id sorted comment_id in descending order", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?sort_by=comment_id")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments).toBeSortedBy("comment_id", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 comment_id query can be ordered by asc", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?sort_by=comment_id&order=asc")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments).toBeSortedBy("comment_id", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("sort_by=author", () => {
+              test("status: 200 query sort_by=author sorted author in descending order", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?sort_by=author")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments).toBeSortedBy("author", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 author query can be ordered alphabetically by asc", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?sort_by=author&order=asc")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments).toBeSortedBy("author", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("sort_by=votes", () => {
+              test("status: 200 query sort_by=votes sorted votes in descending order", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?sort_by=votes")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments).toBeSortedBy("votes", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 votes query can be ordered by asc", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?sort_by=votes&order=asc")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments).toBeSortedBy("votes", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("errors", () => {
+              test.todo("query not found");
+              test.todo("invalid query");
+              test.todo("invalid query syntax");
+              test.todo("invalid order");
+            });
+          });
         });
 
         describe("POST", () => {
