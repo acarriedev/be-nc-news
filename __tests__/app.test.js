@@ -405,11 +405,13 @@ describe("app", () => {
               });
             });
 
-            describe("errors", () => {
-              test.todo("query not found");
-              test.todo("invalid query");
-              test.todo("invalid query syntax");
-              test.todo("invalid order");
+            test("status: 400 responds with an error when given invalid query", () => {
+              return request(app)
+                .get("/api/articles/1/comments?sort_by=invalid_property")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("Bad request.");
+                });
             });
           });
         });
