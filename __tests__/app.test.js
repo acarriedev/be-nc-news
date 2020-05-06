@@ -119,7 +119,7 @@ describe("app", () => {
 
     describe("/articles", () => {
       describe("/", () => {
-        test("status:200 responds with an array of article objects", () => {
+        test("status: 200 responds with an array of article objects", () => {
           return request(app)
             .get("/api/articles")
             .expect(200)
@@ -128,6 +128,52 @@ describe("app", () => {
               expect(articles.length).toBe(12);
             });
         });
+
+        test("status: 200 each article has the properites that match with articles columns", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              articles.forEach((article) => {
+                expect(Object.keys(article)).toEqual(
+                  expect.arrayContaining([
+                    "author",
+                    "title",
+                    "article_id",
+                    "body",
+                    "topic",
+                    "created_at",
+                    "votes",
+                  ])
+                );
+              });
+            });
+        });
+
+        test("status: 200 expect articles to be sorted by created_at latest", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles).toBeSortedBy("created_at", {
+                descending: true,
+              });
+            });
+        });
+
+        test("status: 200 each article has a comment_count propery which has the number of comments related to that article as its value", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              articles.forEach((article) => {
+                expect(article.hasOwnProperty("comment_count")).toBe(true);
+              });
+              expect(articles[0].comment_count).toBe("13");
+            });
+        });
+
+        // NEXT QUERIES
 
         test("INVALID METHODS", () => {
           const invalidMethods = ["put", "patch", "post", "delete"];
