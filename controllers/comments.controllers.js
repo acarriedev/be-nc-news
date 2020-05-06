@@ -6,6 +6,7 @@ exports.postCommentByArticleId = (req, res, next) => {
 
   createCommentByArticleId(article_id, username, body)
     .then((comment) => {
+      console.log(comment);
       res.status(201).send({ comment });
     })
     .catch(next);

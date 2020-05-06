@@ -14,11 +14,12 @@ exports.errorLogger = (err, req, res, next) => {
 
 exports.handlePSQLErrors = (err, req, res, next) => {
   const codes = {
-    42703: { status: 400, msg: "bad request" },
+    42703: { status: 400, msg: "Bad request." },
     "22P02": {
       status: 400,
       msg: "Bad request: Invalid input. Must be integer.",
     },
+    23503: { status: 400, msg: "Bad request." },
   };
   if (err.code in codes) {
     const { status, msg } = codes[err.code];

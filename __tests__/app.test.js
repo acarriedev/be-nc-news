@@ -256,6 +256,50 @@ describe("app", () => {
                 );
               });
           });
+
+          test("status: 201 responded comment has properties relating to comment columns", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({
+                username: "butter_bridge",
+                body: "This is a great article! (test comment)",
+              })
+              .expect(201)
+              .then(({ body: { comment } }) => {
+                expect(Object.keys(comment)).toEqual(
+                  expect.arrayContaining([
+                    "comment_id",
+                    "author",
+                    "article_id",
+                    "body",
+                    "created_at",
+                    "votes",
+                  ])
+                );
+              });
+          });
+
+          test("status: 400 responds with an error when article_id is not an integer", () => {
+            return request(app)
+              .post("/api/articles/first_article/comments")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe(
+                  "Bad request: Invalid input. Must be integer."
+                );
+              });
+          });
+
+          test("status: 400 responds with an error when given an article_id that doesn't exist", () => {
+            return request(app)
+              .post("/api/articles/909/comments")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Bad request.");
+              });
+          });
+
+          // NOW TEST FOR INVALID COMMENT USER ETC
         });
 
         test("INVALID METHODS", () => {
