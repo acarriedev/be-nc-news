@@ -12,6 +12,8 @@ afterAll(() => {
   return connection.destroy();
 });
 
+// DON'T FORGET TO UNCOMMENT LOGGERS WHEN FINISHED
+
 describe("app", () => {
   test("status: 404 responds with 'Resource not found.' if page doesn't exist", () => {
     return request(app)
@@ -240,6 +242,75 @@ describe("app", () => {
           });
         });
 
+        test("INVALID METHODS", () => {
+          const invalidMethods = ["put", "post", "delete"];
+          const requests = invalidMethods.map((method) => {
+            return request(app)
+              .post("/api/articles/:article_id")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Method not allowed.");
+              });
+          });
+
+          return Promise.all(requests);
+        });
+      });
+
+      describe("/:article_id/comments", () => {
+        describe("GET", () => {
+          test("status: 200 responds with an array of comment objects for the given article_id", () => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(Array.isArray(comments)).toBe(true);
+                expect(comments.length).toBe(13);
+              });
+          });
+
+          test("status: 200 each comment has the properties which match comment columns", () => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                comments.forEach((comment) => {
+                  expect(Object.keys(comment)).toEqual(
+                    expect.arrayContaining([
+                      "comment_id",
+                      "votes",
+                      "created_at",
+                      "author",
+                      "body",
+                    ])
+                  );
+                });
+              });
+          });
+
+          test("status: 400 responds with an error when article_id is not an integer", () => {
+            return request(app)
+              .get("/api/articles/first_article/comments")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe(
+                  "Bad request: Invalid input. Must be integer."
+                );
+              });
+          });
+
+          test("status: 404 responds with an error when given an article_id that doesn't exist", () => {
+            return request(app)
+              .get("/api/articles/909/comments")
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Article not found.");
+              });
+          });
+
+          describe("queries", () => {});
+        });
+
         describe("POST", () => {
           test("status: 201 responds with posted comment", () => {
             return request(app)
@@ -335,7 +406,7 @@ describe("app", () => {
         });
 
         test("INVALID METHODS", () => {
-          const invalidMethods = ["put", "delete"];
+          const invalidMethods = ["put", "patch", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
               .post("/api/articles/:article_id")

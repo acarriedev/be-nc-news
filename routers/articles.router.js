@@ -4,6 +4,7 @@ const {
   patchVotesById,
 } = require("../controllers/articles.controllers");
 const {
+  getCommentsByArticleId,
   postCommentByArticleId,
 } = require("../controllers/comments.controllers");
 const { handle405s } = require("../controllers/errors.controllers");
@@ -16,6 +17,7 @@ articlesRouter
 
 articlesRouter
   .route("/:article_id/comments")
+  .get(getCommentsByArticleId)
   .post(postCommentByArticleId)
   .all(handle405s);
 
