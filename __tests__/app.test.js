@@ -166,12 +166,12 @@ describe("app", () => {
               });
           });
 
-          test("status: 400 responds with an error when given an article_id that doesn't exist", () => {
+          test("status: 404 responds with an error when given an article_id that doesn't exist", () => {
             return request(app)
               .get("/api/articles/909")
-              .expect(400)
+              .expect(404)
               .then(({ body: { msg } }) => {
-                expect(msg).toBe("Bad request. Article does not exist");
+                expect(msg).toBe("Article not found.");
               });
           });
         });
@@ -229,13 +229,13 @@ describe("app", () => {
               });
           });
 
-          test("status: 400 responds with an error when given an article_id that doesn't exist", () => {
+          test("status: 404 responds with an error when given an article_id that doesn't exist", () => {
             return request(app)
               .patch("/api/articles/909")
               .send({ inc_votes: 1 })
-              .expect(400)
+              .expect(404)
               .then(({ body: { msg } }) => {
-                expect(msg).toBe("Bad request. Article does not exist");
+                expect(msg).toBe("Article not found.");
               });
           });
         });
@@ -282,6 +282,10 @@ describe("app", () => {
           test("status: 400 responds with an error when article_id is not an integer", () => {
             return request(app)
               .post("/api/articles/first_article/comments")
+              .send({
+                username: "butter_bridge",
+                body: "This is a great article! (test comment)",
+              })
               .expect(400)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe(
@@ -290,20 +294,48 @@ describe("app", () => {
               });
           });
 
-          test("status: 400 responds with an error when given an article_id that doesn't exist", () => {
+          test("status: 404 responds with an error when given an article_id that doesn't exist", () => {
             return request(app)
               .post("/api/articles/909/comments")
+              .send({
+                username: "butter_bridge",
+                body: "This is a great article! (test comment)",
+              })
               .expect(400)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe("Bad request.");
               });
           });
 
-          // NOW TEST FOR INVALID COMMENT USER ETC
+          test("status: 400 responds with an error when username doesn't exist", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({
+                username: "not_a_user",
+                body: "This is a great article! (test comment)",
+              })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Bad request.");
+              });
+          });
+
+          test("status: 400 responds with an error when username is in an invalid format", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({
+                username: 1,
+                body: "This is a great article! (test comment)",
+              })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Bad request.");
+              });
+          });
         });
 
         test("INVALID METHODS", () => {
-          const invalidMethods = ["post", "put", "delete"];
+          const invalidMethods = ["put", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
               .post("/api/articles/:article_id")

@@ -11,8 +11,8 @@ const fetchArticleByArticleId = (article_id, inc_votes) => {
     .then((article) => {
       if (article.length === 0) {
         return Promise.reject({
-          status: 400,
-          msg: "Bad request. Article does not exist",
+          status: 404,
+          msg: "Article not found.",
         });
       } else return article[0];
     });
@@ -31,8 +31,8 @@ const updateVotesById = (article_id, inc_votes) => {
     .then((article) => {
       if (article.length === 0) {
         return Promise.reject({
-          status: 400,
-          msg: "Bad request. Article does not exist",
+          status: 404,
+          msg: "Article not found.",
         });
       } else return article[0];
     });
