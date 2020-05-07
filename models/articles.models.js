@@ -1,14 +1,13 @@
 const { connection } = require("../db/connection");
 
-const fetchAllArticles = () => {
-  // return connection.select("*").from("articles");
+const fetchAllArticles = (sort_by = "created_at", order = "desc") => {
   return connection
     .select("articles.*")
     .count("comments.comment_id as comment_count")
     .from("articles")
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
-    .orderBy("created_at", "desc");
+    .orderBy(sort_by, order);
 };
 
 const fetchArticleByArticleId = (article_id, inc_votes) => {

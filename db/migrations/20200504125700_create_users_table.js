@@ -1,15 +1,15 @@
-exports.up = function (knex) {
+exports.up = function (connection) {
   console.log("creating users table...");
 
-  return knex.schema.createTable("users", (usersTable) => {
+  return connection.schema.createTable("users", (usersTable) => {
     usersTable.text("username").primary().unique();
     usersTable.text("avatar_url");
     usersTable.text("name");
   });
 };
 
-exports.down = function (knex) {
+exports.down = function (connection) {
   console.log("removing users table...");
 
-  return knex.schema.dropTable("users");
+  return connection.schema.dropTable("users");
 };

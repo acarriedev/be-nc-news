@@ -7,27 +7,27 @@ const {
 
 const { formatDates, formatComments, makeRefObj } = require("../utils/utils");
 
-exports.seed = (knex) => {
-  return knex.migrate
+exports.seed = (connection) => {
+  return connection.migrate
     .rollback()
     .then(() => {
-      return knex.migrate.latest();
+      return connection.migrate.latest();
     })
     .then(() => {
-      return knex("topics").insert(topicData);
+      return connection("topics").insert(topicData);
     })
     .then(() => {
-      return knex("users").insert(userData);
+      return connection("users").insert(userData);
     })
     .then(() => {
       const formattedArticles = formatDates(articleData);
 
-      return knex("articles").insert(formattedArticles).returning("*");
+      return connection("articles").insert(formattedArticles).returning("*");
     })
     .then((articleRows) => {
       const articleRef = makeRefObj(articleRows, "title", "article_id");
       const formattedComments = formatComments(commentData, articleRef);
 
-      return knex("comments").insert(formattedComments);
+      return connection("comments").insert(formattedComments);
     });
 };

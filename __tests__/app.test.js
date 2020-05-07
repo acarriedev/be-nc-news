@@ -173,7 +173,212 @@ describe("app", () => {
             });
         });
 
-        // NEXT QUERIES
+        describe("queries", () => {
+          describe("sort_by & order", () => {
+            describe("sort_by=created_at", () => {
+              test("status: 200 default sorted order is by created_at latest", () => {
+                return request(app)
+                  .get("/api/articles")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("created_at", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 created_at can be ordered by asc", () => {
+                return request(app)
+                  .get("/api/articles?order=asc")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("created_at", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("sort_by=author", () => {
+              test("status: 200 query sort_by=author sorted author in descending order", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=author")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("author", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 author query can be ordered alphabetically by asc", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=author&order=asc")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("author", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("sort_by=title", () => {
+              test("status: 200 query sort_by=title sorts by title alphabetically in descending order", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=title")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("title", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 title query can be ordered by asc", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=title&order=asc")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("title", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("sort_by=votes", () => {
+              test("status: 200 query sort_by=votes sorted votes in descending order", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=votes")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("votes", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 votes query can be ordered by asc", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=votes&order=asc")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("votes", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("sort_by=topic", () => {
+              test("status: 200 query sort_by=topic sorts by topic alphabetically in descending order", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=topic")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("topic", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 topic query can be ordered by asc", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=topic&order=asc")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("topic", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("sort_by=article_id", () => {
+              test("status: 200 query sort_by=article_id sorts by article_id in descending order", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=article_id")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("article_id", {
+                      descending: true,
+                    });
+                  });
+              });
+
+              test("status: 200 article_id query can be ordered by asc", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=article_id&order=asc")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("article_id", {
+                      ascending: true,
+                    });
+                  });
+              });
+            });
+
+            describe("sort_by=comment_count", () => {
+              test("status: 200 query sort_by=comment_count sorts by comment_count in descending order", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=comment_count")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("comment_count", {
+                      descending: true,
+                      coerce: true,
+                    });
+                  });
+              });
+
+              test("status: 200 comment_count query can be ordered by asc", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=comment_count&order=asc")
+                  .expect(200)
+                  .then(({ body: { articles } }) => {
+                    expect(articles).toBeSortedBy("comment_count", {
+                      ascending: true,
+                      coerce: true,
+                    });
+                  });
+              });
+            });
+
+            test("status: 400 responds with an error when given invalid query", () => {
+              return request(app)
+                .get("/api/articles?sort_by=invalid_property")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("Bad request.");
+                });
+            });
+          });
+
+          describe("author", () => {
+            test("status: 200 author=:author returns specified author object", () => {
+              return request(app)
+                .get("/api/articles?author=butter_bridge")
+                .expect(200)
+                .then((articles) => {
+                  articles.forEach((article) => {
+                    expect(article.author).toBe("butter_bridge");
+                    expect(Object.keys(article)).toEqual(
+                      expect.arrayContaining([
+                        "author",
+                        "title",
+                        "article_id",
+                        "body",
+                        "topic",
+                        "created_at",
+                        "votes",
+                      ])
+                    );
+                  });
+                });
+            });
+          });
+        });
 
         test("INVALID METHODS", () => {
           const invalidMethods = ["put", "patch", "post", "delete"];

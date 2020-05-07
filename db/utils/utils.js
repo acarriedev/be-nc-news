@@ -1,9 +1,9 @@
 const formatDates = (list) => {
-  return list.map((article) => {
-    const newArticle = { ...article };
-    const date = new Date(article.created_at);
-    newArticle.created_at = date.toJSON();
-    return newArticle;
+  return list.map((listItem) => {
+    const newListItem = { ...listItem };
+    const date = new Date(listItem.created_at);
+    newListItem.created_at = date.toJSON();
+    return newListItem;
   });
 };
 
