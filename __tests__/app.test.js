@@ -957,6 +957,21 @@ describe("app", () => {
           });
         });
 
+        describe("DELETE", () => {
+          test("status: 204 removes comment from database with no reference", () => {
+            return request(app).del("/api/comments/5").expect(204);
+          });
+
+          test("status: 404 for non-exists comment_id", () => {
+            return request(app)
+              .del("/api/comments/500")
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Comment not found.");
+              });
+          });
+        });
+
         test("INVALID METHODS", () => {
           const invalidMethods = ["put", "post", "get"];
           const requests = invalidMethods.map((method) => {
