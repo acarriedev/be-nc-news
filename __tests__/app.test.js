@@ -105,7 +105,7 @@ describe("app", () => {
           const invalidMethods = ["patch", "post", "put", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
-              [method]("/api/users/:username")
+              [method]("/api/users/butter_bridge")
               .expect(405)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe("Method not allowed.");
@@ -521,7 +521,7 @@ describe("app", () => {
               });
           });
 
-          test("status: 200 update article object has votes property increased by in_votes amount if in_votes is positive", () => {
+          test("status: 200 updated article object has votes property increased by in_votes amount if in_votes is positive", () => {
             return request(app)
               .patch("/api/articles/3")
               .send({ inc_votes: 10 })
@@ -531,7 +531,7 @@ describe("app", () => {
               });
           });
 
-          test("status: 200 update article object has votes property decreased by in_votes amount if in_votes is negative", () => {
+          test("status: 200 updated article object has votes property decreased by in_votes amount if in_votes is negative", () => {
             return request(app)
               .patch("/api/articles/1")
               .send({ inc_votes: -1 })
@@ -590,7 +590,7 @@ describe("app", () => {
           const invalidMethods = ["put", "post", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
-              [method]("/api/articles/:article_id")
+              [method]("/api/articles/1")
               .expect(405)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe("Method not allowed.");
@@ -858,7 +858,110 @@ describe("app", () => {
           const invalidMethods = ["put", "patch", "delete"];
           const requests = invalidMethods.map((method) => {
             return request(app)
-              [method]("/api/articles/:article_id/comments")
+              [method]("/api/articles/1/comments")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Method not allowed.");
+              });
+          });
+
+          return Promise.all(requests);
+        });
+      });
+    });
+
+    describe("/comments", () => {
+      describe("/:comment_id", () => {
+        describe("PATCH", () => {
+          test("status: 200 responds with a single comment object", () => {
+            return request(app)
+              .patch("/api/comments/2")
+              .send({ inc_votes: 1 })
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(Object.keys(comment)).toEqual(
+                  expect.arrayContaining([
+                    "comment_id",
+                    "author",
+                    "article_id",
+                    "body",
+                    "created_at",
+                    "votes",
+                  ])
+                );
+              });
+          });
+
+          test("status: 200 updated comment object has votes property increased by in_votes amount if in_votes is positive", () => {
+            return request(app)
+              .patch("/api/comments/1")
+              .send({ inc_votes: 10 })
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(comment.votes).toBe(26);
+              });
+          });
+
+          test("status: 200 updated comment object has votes property decreased by in_votes amount if in_votes is negative", () => {
+            return request(app)
+              .patch("/api/comments/3")
+              .send({ inc_votes: -1 })
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(comment.votes).toBe(99);
+              });
+          });
+
+          test("status: 400 responds with an error when inc_vote is not an integer", () => {
+            return request(app)
+              .patch("/api/comments/4")
+              .send({ inc_votes: "Not an Integer!" })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe(
+                  "Bad request: Invalid input. Must be integer."
+                );
+              });
+          });
+
+          test("status: 400 responds with an error when comment_id is not an integer", () => {
+            return request(app)
+              .patch("/api/comments/not_an_int")
+              .send({ inc_votes: 20 })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe(
+                  "Bad request: Invalid input. Must be integer."
+                );
+              });
+          });
+
+          test("status: 404 responds with an error when given an comment_id that doesn't exist", () => {
+            return request(app)
+              .patch("/api/comments/909")
+              .send({ inc_votes: 1 })
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Comment not found.");
+              });
+          });
+
+          test("status: 400 responds with an error votes are missing", () => {
+            return request(app)
+              .patch("/api/comments/1")
+              .send({})
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Bad request: Missing input.");
+              });
+          });
+        });
+
+        test("INVALID METHODS", () => {
+          const invalidMethods = ["put", "post", "get"];
+          const requests = invalidMethods.map((method) => {
+            return request(app)
+              [method]("/api/comments/1")
               .expect(405)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe("Method not allowed.");

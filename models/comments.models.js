@@ -30,4 +30,27 @@ const createCommentByArticleId = (article_id, author, body) => {
     });
 };
 
-module.exports = { fetchCommentsByArticleId, createCommentByArticleId };
+const updateCommentVotesById = (comment_id, inc_votes) => {
+  if (!inc_votes)
+    return Promise.reject({ status: 400, msg: "Bad request: Missing input." });
+  return connection
+    .select("*")
+    .from("comments")
+    .where({ comment_id })
+    .increment("votes", inc_votes)
+    .returning("*")
+    .then((comment) => {
+      if (comment.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "Comment not found.",
+        });
+      } else return comment[0];
+    });
+};
+
+module.exports = {
+  fetchCommentsByArticleId,
+  createCommentByArticleId,
+  updateCommentVotesById,
+};

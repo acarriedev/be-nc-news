@@ -45,7 +45,7 @@ const fetchArticleByArticleId = (article_id) => {
     });
 };
 
-const updateVotesById = (article_id, inc_votes) => {
+const updateArticleVotesById = (article_id, inc_votes) => {
   if (!inc_votes)
     return Promise.reject({ status: 400, msg: "Bad request: Missing input." });
   return connection
@@ -67,4 +67,8 @@ const updateVotesById = (article_id, inc_votes) => {
     });
 };
 
-module.exports = { fetchAllArticles, fetchArticleByArticleId, updateVotesById };
+module.exports = {
+  fetchAllArticles,
+  fetchArticleByArticleId,
+  updateArticleVotesById,
+};
