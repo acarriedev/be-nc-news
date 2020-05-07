@@ -11,7 +11,8 @@
     "migrate-latest": "knex migrate:latest",
     "migrate-rollback": "knex migrate:rollback",
     "test-utils": "jest spec/utils.spec.js",
-    "test": "jest spec/app.spec.js --watch"
+    "test": "jest spec/app.spec.js --watch",
+    "dev-server": "node listen.js"
   },
   "repository": {
     "type": "git",

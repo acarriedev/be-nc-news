@@ -8,7 +8,7 @@ exports.handle405s = (req, res, next) => {
 
 exports.errorLogger = (err, req, res, next) => {
   const { method, url } = req;
-  // console.log(`error occurred on ${method} ${url} at ${Date.now()}`);
+  console.log(`error occurred on ${method} ${url} at ${Date.now()}`);
   next(err);
 };
 

@@ -12,8 +12,6 @@ afterAll(() => {
   return connection.destroy();
 });
 
-// DON'T FORGET TO UNCOMMENT LOGGERS WHEN FINISHED
-
 describe("app", () => {
   test("status: 404 responds with 'Resource not found.' if page doesn't exist", () => {
     return request(app)
@@ -129,7 +127,7 @@ describe("app", () => {
             });
         });
 
-        test("status: 200 each article has the properites that match with articles columns", () => {
+        test("status: 200 each article has properites that match with columns in articles", () => {
           return request(app)
             .get("/api/articles")
             .expect(200)
@@ -892,7 +890,7 @@ describe("app", () => {
               });
           });
 
-          test("status: 200 updated comment object has votes property increased by in_votes amount if in_votes is positive", () => {
+          test("status: 200 updated comment object has votes property increased by inc_votes amount if inc_votes is positive", () => {
             return request(app)
               .patch("/api/comments/1")
               .send({ inc_votes: 10 })
@@ -902,7 +900,7 @@ describe("app", () => {
               });
           });
 
-          test("status: 200 updated comment object has votes property decreased by in_votes amount if in_votes is negative", () => {
+          test("status: 200 updated comment object has votes property decreased by inc_votes amount if inc_votes is negative", () => {
             return request(app)
               .patch("/api/comments/3")
               .send({ inc_votes: -1 })
