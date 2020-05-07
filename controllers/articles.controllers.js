@@ -7,6 +7,8 @@ const {
 exports.getAllArticles = (req, res, next) => {
   const { sort_by, order, author, topic } = req.query;
 
+  // find the user here and IF the user doesn't exist then reject the promise here rather than in the models. This is more of a 404. change the test to suit.
+
   fetchAllArticles(sort_by, order, author, topic)
     .then((articles) => {
       res.send({ articles });
