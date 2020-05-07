@@ -29,8 +29,8 @@ describe("app", () => {
           return request(app)
             .get("/api")
             .expect(200)
-            .then(({ body: { api } }) => {
-              expect(Object.keys(api)).toEqual(
+            .then(({ body }) => {
+              expect(Object.keys(body)).toEqual(
                 expect.arrayContaining([
                   "GET /api",
                   "GET /api/topics",
@@ -44,11 +44,11 @@ describe("app", () => {
           return request(app)
             .get("/api")
             .expect(200)
-            .then(({ body: { api } }) => {
+            .then(({ body }) => {
               const endPoints = [
-                api["GET /api"],
-                api["GET /api/topics"],
-                api["GET /api/articles"],
+                body["GET /api"],
+                body["GET /api/topics"],
+                body["GET /api/articles"],
               ];
 
               endPoints.forEach((endpoint) => {

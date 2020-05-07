@@ -1,6 +1,4 @@
 exports.up = function (connection) {
-  console.log("creating articles table...");
-
   return connection.schema.createTable("articles", (articlesTable) => {
     articlesTable.increments("article_id").primary();
     articlesTable.text("title");
@@ -15,7 +13,5 @@ exports.up = function (connection) {
 };
 
 exports.down = function (connection) {
-  console.log("removing articles table...");
-
   return connection.schema.dropTable("articles");
 };

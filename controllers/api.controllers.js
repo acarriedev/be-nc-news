@@ -1,10 +1,5 @@
-const { fetchAPIEndPoints } = require("../models/api.models");
+const endPointsJSON = require("../endpoints.json");
 
 exports.getAPIEndPoints = (req, res, next) => {
-  fetchAPIEndPoints((err, api) => {
-    if (err) next(err);
-    else {
-      res.send({ api });
-    }
-  });
+  res.send(endPointsJSON);
 };
