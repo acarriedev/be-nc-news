@@ -356,7 +356,7 @@ describe("app", () => {
           });
 
           describe("author", () => {
-            test("status: 200 author=:author returns specified author object", () => {
+            test("status: 200 author=:author returns article objects by specified author", () => {
               return request(app)
                 .get("/api/articles?author=butter_bridge")
                 .expect(200)
@@ -365,6 +365,60 @@ describe("app", () => {
 
                   articles.forEach((article) => {
                     expect(article.author).toBe("butter_bridge");
+                  });
+                });
+            });
+
+            test("status: 400 responds with an error when given invalid query", () => {
+              return request(app)
+                .get("/api/articles?author=invalid_property")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("Bad request: Invalid query.");
+                });
+            });
+          });
+
+          describe("topic", () => {
+            test("status: 200 topic=:topic returns article objects by specified topic object", () => {
+              return request(app)
+                .get("/api/articles?topic=mitch")
+                .expect(200)
+                .then(({ body: { articles } }) => {
+                  expect(articles.length).toBe(11);
+
+                  articles.forEach((article) => {
+                    expect(article.topic).toBe("mitch");
+                  });
+                });
+            });
+
+            test("status: 400 responds with an error when given invalid query", () => {
+              return request(app)
+                .get("/api/articles?topic=invalid_property")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("Bad request: Invalid query.");
+                });
+            });
+          });
+
+          describe("multiple queries", () => {
+            test("works with multiple chained queries", () => {
+              return request(app)
+                .get(
+                  "/api/articles?sort_by=votes&order=asc&author=butter_bridge&topic=mitch"
+                )
+                .expect(200)
+                .then(({ body: { articles } }) => {
+                  expect(articles.length).toBe(3);
+                  expect(articles).toBeSortedBy("votes", {
+                    ascending: true,
+                  });
+
+                  articles.forEach((article) => {
+                    expect(article.author).toBe("butter_bridge");
+                    expect(article.topic).toBe("mitch");
                   });
                 });
             });
@@ -518,6 +572,16 @@ describe("app", () => {
               .expect(404)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe("Article not found.");
+              });
+          });
+
+          test("status: 400 responds with an error votes are missing", () => {
+            return request(app)
+              .patch("/api/articles/1")
+              .send({})
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Bad request: Missing input.");
               });
           });
         });

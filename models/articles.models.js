@@ -1,6 +1,11 @@
 const { connection } = require("../db/connection");
 
-const fetchAllArticles = (sort_by = "created_at", order = "desc", author) => {
+const fetchAllArticles = (
+  sort_by = "created_at",
+  order = "desc",
+  author,
+  topic
+) => {
   return connection
     .select("articles.*")
     .count("comments.comment_id as comment_count")
@@ -8,12 +13,21 @@ const fetchAllArticles = (sort_by = "created_at", order = "desc", author) => {
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .modify((query) => {
       if (author) query.where({ "articles.author": author });
+      if (topic) query.where({ "articles.topic": topic });
     })
     .groupBy("articles.article_id")
-    .orderBy(sort_by, order);
+    .orderBy(sort_by, order)
+    .then((articles) => {
+      if (articles.length === 0) {
+        return Promise.reject({
+          status: 400,
+          msg: "Bad request: Invalid query.",
+        });
+      } else return articles;
+    });
 };
 
-const fetchArticleByArticleId = (article_id, inc_votes) => {
+const fetchArticleByArticleId = (article_id) => {
   return connection
     .select("articles.*")
     .count("comments.comment_id as comment_count")
@@ -32,6 +46,8 @@ const fetchArticleByArticleId = (article_id, inc_votes) => {
 };
 
 const updateVotesById = (article_id, inc_votes) => {
+  if (!inc_votes)
+    return Promise.reject({ status: 400, msg: "Bad request: Missing input." });
   return connection
     .select("articles.*")
     .count("comments.comment_id as comment_count")
