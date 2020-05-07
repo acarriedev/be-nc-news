@@ -23,6 +23,56 @@ describe("app", () => {
   });
 
   describe("/api", () => {
+    describe("/", () => {
+      describe("GET", () => {
+        test("status: 200 responds with a JSON describing API endpoints", () => {
+          return request(app)
+            .get("/api")
+            .expect(200)
+            .then(({ body: { api } }) => {
+              expect(Object.keys(api)).toEqual(
+                expect.arrayContaining([
+                  "GET /api",
+                  "GET /api/topics",
+                  "GET /api/articles",
+                ])
+              );
+            });
+        });
+
+        test("status: 200 each endpoint object has a description property which describes the endpoint", () => {
+          return request(app)
+            .get("/api")
+            .expect(200)
+            .then(({ body: { api } }) => {
+              const endPoints = [
+                api["GET /api"],
+                api["GET /api/topics"],
+                api["GET /api/articles"],
+              ];
+
+              endPoints.forEach((endpoint) => {
+                expect(endpoint.hasOwnProperty("description")).toBe(true);
+              });
+            });
+        });
+      });
+
+      test("INVALID METHODS", () => {
+        const invalidMethods = ["patch", "post", "put", "delete"];
+        const requests = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Method not allowed.");
+            });
+        });
+
+        return Promise.all(requests);
+      });
+    });
+
     describe("/topics", () => {
       describe("GET", () => {
         test("status:200 responds with an array of topic objects", () => {
