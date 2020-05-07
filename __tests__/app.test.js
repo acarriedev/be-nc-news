@@ -360,20 +360,11 @@ describe("app", () => {
               return request(app)
                 .get("/api/articles?author=butter_bridge")
                 .expect(200)
-                .then((articles) => {
+                .then(({ body: { articles } }) => {
+                  expect(articles.length).toBe(3);
+
                   articles.forEach((article) => {
                     expect(article.author).toBe("butter_bridge");
-                    expect(Object.keys(article)).toEqual(
-                      expect.arrayContaining([
-                        "author",
-                        "title",
-                        "article_id",
-                        "body",
-                        "topic",
-                        "created_at",
-                        "votes",
-                      ])
-                    );
                   });
                 });
             });
@@ -500,6 +491,18 @@ describe("app", () => {
             return request(app)
               .patch("/api/articles/1")
               .send({ inc_votes: "Not an Integer!" })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe(
+                  "Bad request: Invalid input. Must be integer."
+                );
+              });
+          });
+
+          test("status: 400 responds with an error when article_id is not an integer", () => {
+            return request(app)
+              .patch("/api/articles/not_an_int")
+              .send({ inc_votes: 20 })
               .expect(400)
               .then(({ body: { msg } }) => {
                 expect(msg).toBe(
