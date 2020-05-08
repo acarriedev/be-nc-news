@@ -16,15 +16,7 @@ const fetchAllArticles = (
       if (topic) query.where({ "articles.topic": topic });
     })
     .groupBy("articles.article_id")
-    .orderBy(sort_by, order)
-    .then((articles) => {
-      if (articles.length === 0) {
-        return Promise.reject({
-          status: 400,
-          msg: "Bad request: Invalid query.",
-        });
-      } else return articles;
-    });
+    .orderBy(sort_by, order);
 };
 
 const fetchArticleByArticleId = (article_id) => {

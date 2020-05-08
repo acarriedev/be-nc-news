@@ -14,10 +14,10 @@ exports.seed = (connection) => {
       return connection.migrate.latest();
     })
     .then(() => {
-      return connection("topics").insert(topicData);
-    })
-    .then(() => {
-      return connection("users").insert(userData);
+      const topicsInsertions = connection("topics").insert(topicData);
+      const usersInsertions = connection("users").insert(userData);
+
+      return Promise.all([topicsInsertions, usersInsertions]);
     })
     .then(() => {
       const formattedArticles = formatDates(articleData);

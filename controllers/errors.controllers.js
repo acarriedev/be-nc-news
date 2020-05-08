@@ -8,7 +8,9 @@ exports.handle405s = (req, res, next) => {
 
 exports.errorLogger = (err, req, res, next) => {
   const { method, url } = req;
-  // console.log(`error occurred on ${method} ${url} at ${Date.now()}`);
+  if (process.env.NODE_ENV !== "test") {
+    console.log(`error occurred on ${method} ${url} at ${Date.now()}`);
+  }
   next(err);
 };
 
@@ -20,6 +22,7 @@ exports.handlePSQLErrors = (err, req, res, next) => {
       msg: "Bad request: Invalid input. Must be integer.",
     },
     23503: { status: 400, msg: "Bad request." },
+    "23502": { status: 400, msg: "Bad request." },
   };
   if (err.code in codes) {
     const { status, msg } = codes[err.code];

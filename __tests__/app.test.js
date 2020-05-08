@@ -139,12 +139,12 @@ describe("app", () => {
               });
           });
 
-          test("status: 400 responds with an error when given am invalid username", () => {
+          test("status: 404 responds with an error when given am invalid username", () => {
             return request(app)
               .get("/api/users/invalid_user")
-              .expect(400)
+              .expect(404)
               .then(({ body: { msg } }) => {
-                expect(msg).toBe("Bad request.");
+                expect(msg).toBe("User not found.");
               });
           });
         });
@@ -417,12 +417,21 @@ describe("app", () => {
                 });
             });
 
-            test("status: 400 responds with an error when given invalid query", () => {
+            test("status: 200 author=:author returns empty array if user exists but has no articles", () => {
               return request(app)
-                .get("/api/articles?author=invalid_property")
-                .expect(400)
+                .get("/api/articles?author=lurker")
+                .expect(200)
+                .then(({ body: { articles } }) => {
+                  expect(articles.length).toBe(0);
+                });
+            });
+
+            test("status: 404 responds with an error user doesn't exist", () => {
+              return request(app)
+                .get("/api/articles?author=invalid_user")
+                .expect(404)
                 .then(({ body: { msg } }) => {
-                  expect(msg).toBe("Bad request: Invalid query.");
+                  expect(msg).toBe("User not found");
                 });
             });
           });
@@ -441,12 +450,21 @@ describe("app", () => {
                 });
             });
 
+            test("status: 200 topic=:topic returns empty array if topic exists but has no articles", () => {
+              return request(app)
+                .get("/api/articles?topic=paper")
+                .expect(200)
+                .then(({ body: { articles } }) => {
+                  expect(articles.length).toBe(0);
+                });
+            });
+
             test("status: 400 responds with an error when given invalid query", () => {
               return request(app)
                 .get("/api/articles?topic=invalid_property")
-                .expect(400)
+                .expect(404)
                 .then(({ body: { msg } }) => {
-                  expect(msg).toBe("Bad request: Invalid query.");
+                  expect(msg).toBe("Topic not found");
                 });
             });
           });
@@ -680,6 +698,16 @@ describe("app", () => {
               });
           });
 
+          test("status: 200 returns an empty array when article exists but has no comments", () => {
+            return request(app)
+              .get("/api/articles/2/comments")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(Array.isArray(comments)).toBe(true);
+                expect(comments.length).toBe(0);
+              });
+          });
+
           test("status: 400 responds with an error when article_id is not an integer", () => {
             return request(app)
               .get("/api/articles/first_article/comments")
@@ -894,6 +922,18 @@ describe("app", () => {
               .send({
                 username: 1,
                 body: "This is a great article! (test comment)",
+              })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Bad request.");
+              });
+          });
+
+          test("status: 400 responds with an error when request does not include all required keys", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({
+                username: 1,
               })
               .expect(400)
               .then(({ body: { msg } }) => {
