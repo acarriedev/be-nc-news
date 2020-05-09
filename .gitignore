@@ -2,3 +2,4 @@ node_modules
 knexfile.js
 query-output.txt
 query.sql
+README_build.md
