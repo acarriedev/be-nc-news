@@ -9,16 +9,11 @@ const { fetchArticleByArticleId } = require("../models/articles.models");
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { sort_by, order } = req.query;
+  const queries = [fetchCommentsByArticleId(article_id, sort_by, order)];
+  if (article_id) queries.push(fetchArticleByArticleId(article_id));
 
-  fetchArticleByArticleId(article_id)
-    .then((article) => {
-      if (article) {
-        return fetchCommentsByArticleId(article_id, sort_by, order);
-      } else {
-        return Promise.reject({ status: 404, msg: "Article not found." });
-      }
-    })
-    .then((comments) => {
+  Promise.all(queries)
+    .then(([comments]) => {
       res.send({ comments });
     })
     .catch(next);

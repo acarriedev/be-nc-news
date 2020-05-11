@@ -431,7 +431,7 @@ describe("app", () => {
                 .get("/api/articles?author=invalid_user")
                 .expect(404)
                 .then(({ body: { msg } }) => {
-                  expect(msg).toBe("User not found");
+                  expect(msg).toBe("User not found.");
                 });
             });
           });
@@ -459,12 +459,12 @@ describe("app", () => {
                 });
             });
 
-            test("status: 400 responds with an error when given invalid query", () => {
+            test("status: 404 responds with an error when given invalid query", () => {
               return request(app)
                 .get("/api/articles?topic=invalid_property")
                 .expect(404)
                 .then(({ body: { msg } }) => {
-                  expect(msg).toBe("Topic not found");
+                  expect(msg).toBe("Topic not found.");
                 });
             });
           });
