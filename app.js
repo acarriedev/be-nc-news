@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const { logger } = require("./controllers/logging.controllers");
 const apiRouter = require("./routers/api.router");
 const {
@@ -10,6 +11,7 @@ const {
   handleInternalErrors,
 } = require("./controllers/errors.controllers");
 
+app.use(cors());
 app.use(express.json());
 app.use(logger);
 
