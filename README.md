@@ -4,7 +4,7 @@ Welcome to AC's Northcoders News. This is a resource of articles about all thing
 
 This project requires a basic understanding of `node-postgres`, `express`, `knex` and `sql`.
 
-Check out the Heroku app [here](https://ac-nc-news.herokuapp.com/)
+Check out the hosted API [here](https://ac-nc-news.herokuapp.com/api)
 
 ---
 
@@ -51,7 +51,7 @@ npm run seed
 
 ## Tests
 
-The tests for this api have been designed with `jest` and `jest sorted`. Jest has been set to watch mode. To escpae watch mode enter this is the terminal
+The tests for this api have been designed with `jest` and `jest sorted`. Jest has been set to watch mode. To escape watch mode enter this in the terminal
 
 ```bash
 ^c
@@ -67,7 +67,7 @@ npm test app
 
 ### Utils
 
-Utility functions have been used in some of the seeding for this project. These functions are for use small sections of logic used in the project to help the process run more smoothly. The tests are also in the `__tests__` folder in `utils.test.js`. To test these run this in the terminal
+Utility functions have been used in some of the seeding for this project. These functions are for use on small sections of logic used in the project to help the process run more smoothly. The tests are also in the `__tests__` folder in `utils.test.js`. To test these run this in the terminal
 
 ```bash
 npm test utils
