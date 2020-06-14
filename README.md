@@ -15,7 +15,7 @@ Fork this repo
 Clone this repo:
 
 ```bash
-git clone https://github.com/scrymgeourg/be-nc-news
+git clone https://github.com/acarriedev/be-nc-news
 
 cd be-nc-news
 ```
@@ -100,7 +100,7 @@ GET /api
 
 ## Author
 
-- Alex Carrie - [github](https://github.com/scrymgeourg/)
+- Alex Carrie - [github](https://github.com/acarriedev/)
 
 ---
 
